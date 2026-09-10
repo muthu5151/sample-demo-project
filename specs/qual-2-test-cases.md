@@ -1,0 +1,14 @@
+| Test ID | Test Scenario / Summary | Type | Pre-conditions | Test Steps | Test Data | Expected Result | Traceability (AC #) |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| TC-001 | Verify the registration page is displayed | Positive | User is not authenticated | 1. Select "Register / Sign Up" | N/A | Registration page is displayed with required fields | AC1 |
+| TC-002 | Verify successful registration | Positive | User is on the registration page | 1. Enter valid registration details<br>2. Submit the form | Valid email, password | Account is created, verification email sent, confirmation message displayed | AC2 |
+| TC-003 | Verify mandatory field validation | Negative | User is on the registration page | 1. Submit the form without filling mandatory fields | Empty fields | Validation messages displayed, registration not submitted | AC3 |
+| TC-004 | Verify invalid email validation | Negative | User is on the registration page | 1. Enter invalid email<br>2. Submit the form | Invalid email | Email validation message displayed, account not created | AC4 |
+| TC-005 | Verify password policy validation | Negative | User is on the registration page | 1. Enter weak password<br>2. Submit the form | Weak password | Password validation message displayed, account not created | AC5 |
+| TC-006 | Verify existing user registration | Negative | User is on the registration page | 1. Enter email of existing account<br>2. Submit the form | Existing email | Error message displayed, duplicate account not created | AC6 |
+| TC-007 | Verify login page is displayed | Positive | User is not authenticated | 1. Navigate to login page | N/A | Login option displayed, Okta authentication initiable | AC7 |
+| TC-008 | Verify successful Okta login | Positive | User has valid Okta account | 1. Enter valid credentials<br>2. Authenticate via Okta | Valid Okta credentials | User authenticated, redirected to app, session established | AC8 |
+| TC-009 | Verify invalid login | Negative | User is on login page | 1. Enter invalid credentials<br>2. Attempt login | Invalid credentials | Authentication fails, error message displayed | AC9 |
+| TC-010 | Verify unauthorized user access | Negative | User has no app access | 1. Authenticate via Okta | Valid Okta credentials | Access denied, error message displayed | AC10 |
+| TC-011 | Verify protected page access | Negative | User is not authenticated | 1. Attempt to access protected page | N/A | Redirected to login page | AC11 |
+| TC-012 | Verify logout functionality | Positive | User is logged in | 1. Select "Logout" | N/A | Session terminated, user cannot access protected pages | AC12 |
