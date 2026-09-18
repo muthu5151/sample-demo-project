@@ -1,0 +1,11 @@
+| Test ID | Test Scenario / Summary | Type | Pre-conditions | Test Steps | Test Data | Expected Result | Traceability (AC #) |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| TC-001 | Verify successful user registration with valid details | Positive | None | 1. Navigate to registration page<br>2. Enter valid details<br>3. Click "Register" | Valid email: `user@example.com`<br>Strong password: `ValidPass123` | Confirmation message displayed<br>Activation email sent | AC-1 |
+| TC-002 | Verify registration fails with an already registered email | Negative | Email already registered | 1. Navigate to registration page<br>2. Enter already registered email<br>3. Click "Register" | `test@example.com` | Error message "Email is already registered" | AC-1 |
+| TC-003 | Verify registration fails with invalid email format | Negative | None | 1. Navigate to registration page<br>2. Enter invalid email<br>3. Click "Register" | `invalid-email` | Error message "Invalid email format" | AC-1 |
+| TC-004 | Verify successful login with valid credentials | Positive | User account exists and is activated | 1. Navigate to login page<br>2. Enter valid credentials<br>3. Click "Login" | `user@example.com` / `ValidPass123` | Redirected to dashboard | AC-2 |
+| TC-005 | Verify login fails with invalid credentials | Negative | None | 1. Navigate to login page<br>2. Enter invalid credentials<br>3. Click "Login" | `user@example.com` / `WrongPass` | Error message "Invalid username or password" | AC-2 |
+| TC-006 | Verify forgot password functionality sends reset email | Positive | User account exists | 1. Navigate to login page<br>2. Click "Forgot Password"<br>3. Enter registered email<br>4. Submit request | `user@example.com` | Password reset email sent<br>Confirmation message displayed | AC-3 |
+| TC-007 | Verify forgot password fails for unregistered email | Negative | None | 1. Navigate to login page<br>2. Click "Forgot Password"<br>3. Enter unregistered email<br>4. Submit request | `unknown@example.com` | Error message "Email not found" | AC-3 |
+| TC-008 | Verify session timeout redirects to login page | Positive | User is logged in | 1. Log in to application<br>2. Wait for session timeout<br>3. Observe redirection | N/A | Redirected to login page<br>Message "Session expired, please log in again" displayed | AC-4 |
+```
