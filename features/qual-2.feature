@@ -1,90 +1,60 @@
 @suite:user-authentication @env:qa @owner:qa-team @story:QUAL-2 @priority:p1
-Feature: User Authentication - Registration, Okta Login, and Forgot Password
+Feature: User Authentication (User Registration, Okta Login, and Forgot Password)
   # Generated from QUAL-2 — User Authentication functionality.
 
-  @id:TC-AC1 @positive @manual @suite:user-authentication @env:qa @owner:qa-team @priority:p1 @story:QUAL-2
-  Scenario: Display Registration Page
-    Given the user is not authenticated
-    When the user selects "Register / Sign Up"
-    Then the registration page should be displayed with all required fields
-    And the page should clearly identify mandatory and optional fields
-
-  @id:TC-AC2 @positive @manual @suite:user-authentication @env:qa @owner:qa-team @priority:p1 @story:QUAL-2
-  Scenario: Successful Registration
-    Given the user enters valid registration information
-    When the user submits the registration form
-    Then the user account should be created successfully
-    And the user should receive the configured account verification/activation communication
-    And the user should see an appropriate confirmation message
-
-  @id:TC-AC3 @negative @manual @suite:user-authentication @env:qa @owner:qa-team @priority:p1 @story:QUAL-2
-  Scenario: Mandatory Field Validation
+  @id:TC-001 @positive @manual @suite:user-authentication @env:qa @owner:qa-team @priority:p1 @story:QUAL-2
+  Scenario: Successful user registration with valid details
     Given the user is on the registration page
-    When the user submits the form without completing mandatory fields
-    Then validation messages should be displayed for the missing fields
-    And the registration request should not be submitted
+    When the user enters valid details including a unique email and a strong password
+    And clicks the "Register" button
+    Then the system should display a confirmation message
+    And the user should receive an email to verify their account
+    And the account should be activated upon successful verification via Okta
 
-  @id:TC-AC4 @negative @manual @suite:user-authentication @env:qa @owner:qa-team @priority:p1 @story:QUAL-2
-  Scenario: Invalid Email Validation
-    Given the user enters an invalid email address
-    When the user submits the registration form
-    Then the system should display an appropriate email validation message
-    And the account should not be created
+  @id:TC-002 @negative @manual @suite:user-authentication @env:qa @owner:qa-team @priority:p1 @story:QUAL-2
+  Scenario: Registration fails with an already registered email
+    Given the user is on the registration page
+    And an account already exists with the email "test@example.com"
+    When the user attempts to register using "test@example.com"
+    Then the system should display an error message "Email already registered"
 
-  @id:TC-AC5 @negative @manual @suite:user-authentication @env:qa @owner:qa-team @priority:p1 @story:QUAL-2
-  Scenario: Password Policy Validation
-    Given the user enters a password that does not satisfy the configured password policy
-    When the user submits the registration form
-    Then the system should display the applicable password validation message
-    And the account should not be created
+  @id:TC-003 @negative @manual @suite:user-authentication @env:qa @owner:qa-team @priority:p1 @story:QUAL-2
+  Scenario: Registration fails with invalid email format
+    Given the user is on the registration page
+    When the user enters an invalid email format "invalid-email"
+    And clicks the "Register" button
+    Then the system should display an error message "Invalid email format"
 
-  @id:TC-AC6 @negative @manual @suite:user-authentication @env:qa @owner:qa-team @priority:p1 @story:QUAL-2
-  Scenario: Existing User Registration
-    Given an account already exists for the provided email address
-    When the user attempts to register using the same email address
-    Then the registration should not create a duplicate account
-    And an appropriate error/information message should be displayed
+  @id:TC-004 @positive @manual @suite:user-authentication @env:qa @owner:qa-team @priority:p1 @story:QUAL-2
+  Scenario: Successful login with valid credentials
+    Given the user is on the login page
+    When the user enters valid credentials and clicks "Login"
+    Then the user should be redirected to the Okta authentication page
+    And upon successful authentication, the user should be redirected to the application dashboard
 
-  @id:TC-AC7 @positive @manual @suite:user-authentication @env:qa @owner:qa-team @priority:p1 @story:QUAL-2
-  Scenario: Display Login Page
-    Given the user is not authenticated
-    When the user navigates to the login page
-    Then the login option should be displayed
-    And the user should be able to initiate authentication through Okta
+  @id:TC-005 @negative @manual @suite:user-authentication @env:qa @owner:qa-team @priority:p1 @story:QUAL-2
+  Scenario: Login fails with invalid credentials
+    Given the user is on the login page
+    When the user enters invalid credentials and clicks "Login"
+    Then the system should display an error message "Invalid username or password"
 
-  @id:TC-AC8 @positive @manual @suite:user-authentication @env:qa @owner:qa-team @priority:p1 @story:QUAL-2
-  Scenario: Successful Okta Login
-    Given the user has a valid and active Okta account
-    When the user provides valid credentials and completes authentication
-    Then Okta should authenticate the user successfully
-    And the user should be redirected to the application
-    And the authenticated session should be established
+  @id:TC-006 @positive @manual @suite:user-authentication @env:qa @owner:qa-team @priority:p1 @story:QUAL-2
+  Scenario: Successful password reset
+    Given the user is on the "Forgot Password" page
+    When the user enters their registered email and clicks "Submit"
+    Then the system should send a password reset email to the user
+    And the user should be able to reset their password using the link in the email
 
-  @id:TC-AC9 @negative @manual @suite:user-authentication @env:qa @owner:qa-team @priority:p1 @story:QUAL-2
-  Scenario: Invalid Login
-    Given the user provides invalid authentication credentials
-    When the user attempts to log in
-    Then authentication should fail
-    And the user should remain unauthenticated
-    And an appropriate error message should be displayed
+  @id:TC-007 @negative @manual @suite:user-authentication @env:qa @owner:qa-team @priority:p1 @story:QUAL-2
+  Scenario: Password reset fails with unregistered email
+    Given the user is on the "Forgot Password" page
+    When the user enters an unregistered email and clicks "Submit"
+    Then the system should display an error message "Email not found"
 
-  @id:TC-AC10 @negative @manual @suite:user-authentication @env:qa @owner:qa-team @priority:p1 @story:QUAL-2
-  Scenario: Unauthorized User Access
-    Given the user does not have the required application access
-    When the user successfully authenticates through Okta
-    Then the application should prevent unauthorized access
-    And an appropriate access-denied message/page should be displayed
-
-  @id:TC-AC11 @negative @manual @suite:user-authentication @env:qa @owner:qa-team @priority:p1 @story:QUAL-2
-  Scenario: Protected Page Access Without Authentication
-    Given the user is not authenticated
-    When the user attempts to access a protected application page directly
-    Then the user should not be granted access
-    And the user should be redirected to the login/authentication page
-
-  @id:TC-AC12 @positive @manual @suite:user-authentication @env:qa @owner:qa-team @priority:p1 @story:QUAL-2
-  Scenario: Logout Functionality
-    Given the user is successfully logged into the application
-    When the user selects "Logout"
-    Then the application session should be terminated
-    And the user should no longer be able to access protected pages without logging in again
+  @id:TC-008 @positive @manual @suite:user-authentication @env:qa @owner:qa-team @priority:p1 @story:QUAL-2
+  Scenario: Session timeout after inactivity
+    Given the user is logged into the application
+    And the user remains inactive for the configured session timeout duration
+    When the session timeout occurs
+    Then the user should be logged out automatically
+    And the system should redirect the user to the login page
