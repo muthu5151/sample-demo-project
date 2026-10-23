@@ -1,59 +1,70 @@
-@suite:user-authentication @env:qa1 @owner:qa-team @story:QUAL-2 @priority:p1
+@suite:user-authentication @env:qa @owner:qa-team @story:QUAL-2 @priority:p1
 Feature: User Authentication (User Registration, Okta Login, and Forgot Password)
   # Generated from QUAL-2 — User Authentication functionality.
 
-  @id:TC-001 @positive @manual @suite:user-authentication @env:qa1 @owner:qa-team @priority:p1 @story:QUAL-2
+  @id:TC-001 @positive @automated @suite:user-authentication @env:qa @owner:qa-team @priority:p1 @story:QUAL-2
   Scenario: Successful user registration with valid details
     Given the user is on the registration page
-    When the user enters valid mandatory information including email and password
-    And the user submits the registration form
-    Then the system validates the email format and password requirements
-    And the system confirms the registration with a success message
-    And the user receives an account activation email
+    When the user enters valid mandatory details including a unique email and a strong password
+    And clicks the "Register" button
+    Then the system should display a confirmation message
+    And the user should receive an account activation email
+    And the account should be activated after completing the Okta verification process
 
-  @id:TC-002 @negative @manual @suite:user-authentication @env:qa1 @owner:qa-team @priority:p1 @story:QUAL-2
+  @id:TC-002 @negative @manual @suite:user-authentication @env:qa @owner:qa-team @priority:p2 @story:QUAL-2
   Scenario: Registration fails with an already registered email
     Given the user is on the registration page
-    And the email entered is already associated with an existing account
-    When the user submits the registration form
-    Then the system displays an error message "Email already registered"
+    When the user enters an email that is already registered
+    And clicks the "Register" button
+    Then the system should display an error message "Email already registered"
 
-  @id:TC-003 @negative @manual @suite:user-authentication @env:qa1 @owner:qa-team @priority:p1 @story:QUAL-2
+  @id:TC-003 @negative @manual @suite:user-authentication @env:qa @owner:qa-team @priority:p2 @story:QUAL-2
   Scenario: Registration fails with invalid email format
     Given the user is on the registration page
-    When the user enters an invalid email format (e.g., "userexample.com")
-    And the user submits the registration form
-    Then the system displays an error message "Invalid email format"
+    When the user enters an invalid email format
+    And clicks the "Register" button
+    Then the system should display an error message "Invalid email format"
 
-  @id:TC-004 @positive @manual @suite:user-authentication @env:qa1 @owner:qa-team @priority:p1 @story:QUAL-2
-  Scenario: Successful login with valid Okta credentials
+  @id:TC-004 @positive @automated @suite:user-authentication @env:qa @owner:qa-team @priority:p1 @story:QUAL-2
+  Scenario: Successful login with valid credentials
     Given the user is on the login page
-    When the user enters valid Okta credentials
-    And the user submits the login form
-    Then the system redirects the user to the Okta authentication page
-    And the user is successfully authenticated
-    And the user is redirected to the application dashboard
+    When the user enters valid credentials
+    And clicks the "Login" button
+    Then the system should redirect the user to the application dashboard
 
-  @id:TC-005 @negative @manual @suite:user-authentication @env:qa1 @owner:qa-team @priority:p1 @story:QUAL-2
-  Scenario: Login fails with invalid Okta credentials
+  @id:TC-005 @negative @manual @suite:user-authentication @env:qa @owner:qa-team @priority:p2 @story:QUAL-2
+  Scenario: Login fails with invalid credentials
     Given the user is on the login page
-    When the user enters invalid Okta credentials
-    And the user submits the login form
-    Then the system displays an error message "Invalid username or password"
+    When the user enters invalid credentials
+    And clicks the "Login" button
+    Then the system should display an error message "Invalid username or password"
 
-  @id:TC-006 @positive @manual @suite:user-authentication @env:qa1 @owner:qa-team @priority:p1 @story:QUAL-2
-  Scenario: Password reset request
+  @id:TC-006 @negative @manual @suite:user-authentication @env:qa @owner:qa-team @priority:p2 @story:QUAL-2
+  Scenario: Login fails with empty fields
     Given the user is on the login page
-    And the user clicks on the "Forgot Password" link
-    When the user enters their registered email address
-    And submits the password reset request
-    Then the system sends a password reset email to the user
-    And the user receives a confirmation message "Password reset email sent"
+    When the user leaves the email or password field empty
+    And clicks the "Login" button
+    Then the system should display an error message "Email and password are required"
 
-  @id:TC-007 @negative @manual @suite:user-authentication @env:qa1 @owner:qa-team @priority:p1 @story:QUAL-2
+  @id:TC-007 @positive @automated @suite:user-authentication @env:qa @owner:qa-team @priority:p1 @story:QUAL-2
+  Scenario: Successful password reset
+    Given the user is on the "Forgot Password" page
+    When the user enters a registered email address
+    And clicks the "Reset Password" button
+    Then the system should display a confirmation message
+    And the user should receive a password reset email
+
+  @id:TC-008 @negative @manual @suite:user-authentication @env:qa @owner:qa-team @priority:p2 @story:QUAL-2
   Scenario: Password reset fails with unregistered email
-    Given the user is on the login page
-    And the user clicks on the "Forgot Password" link
+    Given the user is on the "Forgot Password" page
     When the user enters an unregistered email address
-    And submits the password reset request
-    Then the system displays an error message "Email not found"
+    And clicks the "Reset Password" button
+    Then the system should display an error message "Email not found"
+
+  @id:TC-009 @positive @automated @suite:user-authentication @env:qa @owner:qa-team @priority:p1 @story:QUAL-2
+  Scenario: Session timeout redirects to login page
+    Given the user is logged into the application
+    And the session timeout duration has elapsed
+    When the user attempts to perform an action
+    Then the system should redirect the user to the login page
+    And display a message "Session expired, please log in again"
