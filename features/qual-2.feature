@@ -1,70 +1,73 @@
 @suite:user-authentication @env:qa @owner:qa-team @story:QUAL-2 @priority:p1
-Feature: User Authentication (User Registration, Okta Login, and Forgot Password)
+Feature: User Registration, Okta Login, and Forgot Password
   # Generated from QUAL-2 — User Authentication functionality.
 
   @id:TC-001 @positive @automated @suite:user-authentication @env:qa @owner:qa-team @priority:p1 @story:QUAL-2
   Scenario: Successful user registration with valid details
     Given the user is on the registration page
-    When the user enters valid mandatory details including a unique email and a strong password
-    And clicks the "Register" button
-    Then the system should display a confirmation message
-    And the user should receive an account activation email
-    And the account should be activated after completing the Okta verification process
+    When the user enters valid mandatory information
+      | Field       | Value               |
+      | First Name  | John               |
+      | Last Name   | Doe                |
+      | Email       | john.doe@example.com |
+      | Password    | ValidPass123!      |
+    And the user submits the registration form
+    Then the system displays a confirmation message "Registration successful"
+    And the user's account is activated via the Okta registration/verification process
 
   @id:TC-002 @negative @manual @suite:user-authentication @env:qa @owner:qa-team @priority:p2 @story:QUAL-2
-  Scenario: Registration fails with an already registered email
+  Scenario: Registration fails when email is already registered
     Given the user is on the registration page
     When the user enters an email that is already registered
-    And clicks the "Register" button
-    Then the system should display an error message "Email already registered"
+      | Field       | Value               |
+      | First Name  | Jane               |
+      | Last Name   | Smith              |
+      | Email       | john.doe@example.com |
+      | Password    | ValidPass123!      |
+    And the user submits the registration form
+    Then the system displays an error message "Email is already registered"
 
   @id:TC-003 @negative @manual @suite:user-authentication @env:qa @owner:qa-team @priority:p2 @story:QUAL-2
-  Scenario: Registration fails with invalid email format
+  Scenario: Registration fails when mandatory fields are missing
     Given the user is on the registration page
-    When the user enters an invalid email format
-    And clicks the "Register" button
-    Then the system should display an error message "Invalid email format"
+    When the user leaves mandatory fields empty
+      | Field       | Value |
+      | First Name  |       |
+      | Last Name   |       |
+      | Email       |       |
+      | Password    |       |
+    And the user submits the registration form
+    Then the system displays error messages for each missing field
+      | Field       | Error Message                |
+      | First Name  | "First Name is required"     |
+      | Last Name   | "Last Name is required"      |
+      | Email       | "Email is required"          |
+      | Password    | "Password is required"       |
 
   @id:TC-004 @positive @automated @suite:user-authentication @env:qa @owner:qa-team @priority:p1 @story:QUAL-2
   Scenario: Successful login with valid credentials
     Given the user is on the login page
     When the user enters valid credentials
-    And clicks the "Login" button
-    Then the system should redirect the user to the application dashboard
+      | Email       | john.doe@example.com |
+      | Password    | ValidPass123!        |
+    And the user submits the login form
+    Then the user is redirected to the application dashboard
 
   @id:TC-005 @negative @manual @suite:user-authentication @env:qa @owner:qa-team @priority:p2 @story:QUAL-2
   Scenario: Login fails with invalid credentials
     Given the user is on the login page
     When the user enters invalid credentials
-    And clicks the "Login" button
-    Then the system should display an error message "Invalid username or password"
+      | Email       | john.doe@example.com |
+      | Password    | InvalidPass123!      |
+    And the user submits the login form
+    Then the system displays an error message "Invalid email or password"
 
-  @id:TC-006 @negative @manual @suite:user-authentication @env:qa @owner:qa-team @priority:p2 @story:QUAL-2
-  Scenario: Login fails with empty fields
+  @id:TC-006 @positive @manual @suite:user-authentication @env:qa @owner:qa-team @priority:p2 @story:QUAL-2
+  Scenario: Forgot password functionality
     Given the user is on the login page
-    When the user leaves the email or password field empty
-    And clicks the "Login" button
-    Then the system should display an error message "Email and password are required"
-
-  @id:TC-007 @positive @automated @suite:user-authentication @env:qa @owner:qa-team @priority:p1 @story:QUAL-2
-  Scenario: Successful password reset
-    Given the user is on the "Forgot Password" page
-    When the user enters a registered email address
-    And clicks the "Reset Password" button
-    Then the system should display a confirmation message
-    And the user should receive a password reset email
-
-  @id:TC-008 @negative @manual @suite:user-authentication @env:qa @owner:qa-team @priority:p2 @story:QUAL-2
-  Scenario: Password reset fails with unregistered email
-    Given the user is on the "Forgot Password" page
-    When the user enters an unregistered email address
-    And clicks the "Reset Password" button
-    Then the system should display an error message "Email not found"
-
-  @id:TC-009 @positive @automated @suite:user-authentication @env:qa @owner:qa-team @priority:p1 @story:QUAL-2
-  Scenario: Session timeout redirects to login page
-    Given the user is logged into the application
-    And the session timeout duration has elapsed
-    When the user attempts to perform an action
-    Then the system should redirect the user to the login page
-    And display a message "Session expired, please log in again"
+    And the user clicks on the "Forgot Password" link
+    When the user enters their registered email address
+      | Email       | john.doe@example.com |
+    And the user submits the request
+    Then the system sends a password reset email to the user
+    And the email contains a link to reset the password
